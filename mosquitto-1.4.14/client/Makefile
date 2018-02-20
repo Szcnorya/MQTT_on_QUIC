@@ -4,12 +4,6 @@ include ../config.mk
 
 all : mosquitto_pub mosquitto_sub test_sub
 
-test_sub : test_sub.o client_shared.o
-	${CROSS_COMPILE}${CC} $^ -o $@ ${CLIENT_LDFLAGS}
-	
-test_sub.o : test_sub.c ../lib/libmosquitto.so.${SOVERSION}
-	${CROSS_COMPILE}${CC} -c $< -o $@ ${CLIENT_CFLAGS}
-
 mosquitto_pub : pub_client.o client_shared.o
 	${CROSS_COMPILE}${CC} $^ -o $@ ${CLIENT_LDFLAGS}
 
