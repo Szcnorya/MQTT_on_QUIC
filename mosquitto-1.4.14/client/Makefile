@@ -2,7 +2,13 @@ include ../config.mk
 
 .PHONY: all install uninstall reallyclean clean
 
-all : mosquitto_pub mosquitto_sub
+all : mosquitto_pub mosquitto_sub test_sub
+
+test_sub : test_sub.o client_shared.o
+	${CROSS_COMPILE}${CC} $^ -o $@ ${CLIENT_LDFLAGS}
+	
+test_sub.o : test_sub.c ../lib/libmosquitto.so.${SOVERSION}
+	${CROSS_COMPILE}${CC} -c $< -o $@ ${CLIENT_CFLAGS}
 
 mosquitto_pub : pub_client.o client_shared.o
 	${CROSS_COMPILE}${CC} $^ -o $@ ${CLIENT_LDFLAGS}
