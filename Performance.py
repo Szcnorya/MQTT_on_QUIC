@@ -9,15 +9,15 @@ from mininet.node import RemoteController
 from mininet.cli import CLI
 from mininet.log import setLogLevel
 from mininet.link import TCLink
-
+from mininet.clean import Cleanup
 #setLogLevel("info")
 
 POOL_SIZE = 8
-RUN_TIME = 10
+RUN_TIME = 5
 NUM_RUNS = 1
 
-DELAYS = (50,)
-BANDWIDTHS = (100,)
+DELAYS = (10,20,50,100,200,500)
+BANDWIDTHS = (5,10,25,50,100)
 LOSSES = (0,)
 
 class SimpleTopology(Topo):
@@ -35,7 +35,7 @@ class SimpleTopology(Topo):
     def create_net(**opts):
         return Mininet(topo=SimpleTopology(**opts), link=TCLink)
 
-def performance_test(srv_cmd, clt_cmd, brok_cmd, run_index, **opts):
+def performance_test(srv_cmd, clt_cmd, brok_cmd, run_index, repeat_times, **opts):
     print("Starting performance test run %s with parameters %s" % (run_index, opts))
     net = SimpleTopology.create_net(**opts)
     net.start()
@@ -44,27 +44,33 @@ def performance_test(srv_cmd, clt_cmd, brok_cmd, run_index, **opts):
     h3 = net.get('h3')
     h3.sendCmd(brok_cmd)
     time.sleep(1)
-    ofile = open('server_run_%s_%s' % (run_index,  '_'.join("%s" % val for (key,val) in opts.iteritems())), 'w')
+    ofile = open('meas/server_run_%s' % ('_'.join("%s" % val for (key,val) in opts.iteritems())), 'w')
     print("Running server:\n%s" % srv_cmd)
     h1.sendCmd(srv_cmd + " 2>error_log")
     time.sleep(1)
-    result = ''
-    for i in range(20):
+    log = ""
+    avg = 0.0
+    for i in range(repeat_times):
         start = time.time()
         h2.sendCmd(clt_cmd)
-        data = h1.monitor(timeoutms=RUN_TIME * 2 * 1000)
-        _ = h2.monitor()
-        result += str(time.time()-start)+"\n"
-	if time.time() - start > (RUN_TIME * 2):
+        _ = h1.monitor(timeoutms=RUN_TIME * 2 * 1000)
+        _ = h2.monitor(timeoutms=RUN_TIME * 2 * 1000)
+        det = time.time()-start
+        det *= 1000
+        log = log + "#{0}:{1}\n".format(i,det)
+        avg += det
+	if det/1000 > (RUN_TIME * 2):
             print("Started at %s and it's now %s, that's %s seconds later" % (start, time.time(), time.time() - start))
             errfile = open('error_log', 'a')
             errfile.write("In run %s test with parameters %s did timeout\n" % (run_index, opts))
             errfile.close()
             break
-    h1.terminate()
-    h2.terminate()
-    h3.terminate()
-    ofile.write(result)
+    for host in [h1,h2,h3]:
+        host.sendInt()
+        while(host.waiting):
+            host.monitor()
+    ofile.write(log)
+    ofile.write("#AVG:"+str(avg/repeat_times)+"ms\n")
     ofile.close()
     net.stop()
     print("Performance test finished")
@@ -89,17 +95,20 @@ def performance_test(srv_cmd, clt_cmd, brok_cmd, run_index, **opts):
 #     pool.close()
 #     pool.join()
 
-def run_all_tests_sequentially(run_index):
+def run_all_tests_sequentially():
+    run_index = 0
     for delay in DELAYS:
         for bw in BANDWIDTHS:
             for loss in LOSSES:
-                performance_test('./mosquitto-1.4.14/client/mosquitto_sub -h 192.168.0.3 -t test -C 20', "./mosquitto-1.4.14/client/mosquitto_pub -h 192.168.0.3 -t test -m Aloha","mosquitto &", run_index, delay=str(delay)+"ms", bw=bw, loss=loss)
-
+                performance_test('./mosquitto-1.4.14/client/mosquitto_sub -h 192.168.0.3 -t test -C 10', "./mosquitto-1.4.14/client/mosquitto_pub -h 192.168.0.3 -t test -m Aloha","mosquitto", run_index, 10, delay=str(delay)+"ms", bw=bw, loss=loss)
+                run_index+=1
+                Cleanup.cleanup()
+                
 def run_cli():
     net = SimpleTopology.create_net()
     net.start()
     CLI(net)
     net.stop()
+
 #run_cli()
-for run_index in range(0,NUM_RUNS):
-    run_all_tests_sequentially(run_index)
+run_all_tests_sequentially()
