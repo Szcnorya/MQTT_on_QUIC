@@ -1,0 +1,37 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "uPcaX0wCGnS167g9KfKOrDWydWQ=",
+			"path": "github.com/bifurcation/mint",
+			"revision": "30a67d8540b4f721cfea9f9ae1cd7f22d227a054",
+			"revisionTime": "2018-02-24T18:21:15Z"
+		},
+		{
+			"checksumSHA1": "PZNcjO1c9gV/LZzppwpVRl6+QAY=",
+			"path": "github.com/bifurcation/mint/syntax",
+			"revision": "a544bfbca6a083ce9ddeb2c5f570cb240837355a",
+			"revisionTime": "2017-12-09T20:11:46Z"
+		},
+		{
+			"checksumSHA1": "PYXuf7wvcj492uWhjvmXlyyQUYc=",
+			"path": "github.com/cheekybits/genny/generic",
+			"revision": "9127e812e1e9e501ce899a18121d316ecb52e4ba",
+			"revisionTime": "2017-03-28T20:00:08Z"
+		},
+		{
+			"checksumSHA1": "IQkUIOnvlf0tYloFx9mLaXSvXWQ=",
+			"path": "golang.org/x/crypto/curve25519",
+			"revision": "d585fd2cc9195196078f516b69daff6744ef5e84",
+			"revisionTime": "2017-12-16T04:08:15Z"
+		},
+		{
+			"checksumSHA1": "4D8hxMIaSDEW5pCQk22Xj4DcDh4=",
+			"path": "golang.org/x/crypto/hkdf",
+			"revision": "d585fd2cc9195196078f516b69daff6744ef5e84",
+			"revisionTime": "2017-12-16T04:08:15Z"
+		}
+	],
+	"rootPath": "github.com/lucas-clemente/quic-go"
+}
