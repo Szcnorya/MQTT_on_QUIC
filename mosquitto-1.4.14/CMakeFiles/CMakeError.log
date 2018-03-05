@@ -1,0 +1,16 @@
+Determining if the function getaddrinfo_a exists in the anl failed with the following output:
+Change Dir: /Users/Szc/Documents/workspace/CSE222A/MQTT_on_QUIC/mosquitto-1.4.14/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_2581f/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_2581f.dir/build.make CMakeFiles/cmTC_2581f.dir/build
+Building C object CMakeFiles/cmTC_2581f.dir/CheckFunctionExists.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -DCHECK_FUNCTION_EXISTS=getaddrinfo_a   -o CMakeFiles/cmTC_2581f.dir/CheckFunctionExists.c.o   -c /usr/local/Cellar/cmake/3.7.2/share/cmake/Modules/CheckFunctionExists.c
+Linking C executable cmTC_2581f
+/usr/local/Cellar/cmake/3.7.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2581f.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=getaddrinfo_a -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_2581f.dir/CheckFunctionExists.c.o  -o cmTC_2581f  -lanl 
+ld: library not found for -lanl
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make[1]: *** [cmTC_2581f] Error 1
+make: *** [cmTC_2581f/fast] Error 2
+
+
