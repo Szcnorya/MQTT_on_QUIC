@@ -70,7 +70,7 @@ func getMessageBuffer(c io.Closer) ([]byte, error) {
 		return nil, ErrInvalidConnectionType
 	}
 
-	conn, ok := c.(quic.stream)
+	conn, ok := c.(quic.Stream)
 	if !ok {
 		return nil, ErrInvalidConnectionType
 	}
@@ -134,7 +134,7 @@ func writeMessageBuffer(c io.Closer, b []byte) error {
 		return ErrInvalidConnectionType
 	}
 
-	conn, ok := c.(quic.stream)
+	conn, ok := c.(quic.Stream)
 	
 	if !ok {
 		return ErrInvalidConnectionType

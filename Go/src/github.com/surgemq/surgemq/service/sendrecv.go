@@ -18,11 +18,12 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"net"
 	"time"
 
 	"github.com/surge/glog"
 	"github.com/surgemq/message"
+	quic "github.com/lucas-clemente/quic-go"
+
 )
 
 type netReader interface {
@@ -60,7 +61,7 @@ func (this *service) receiver() {
 	this.wgStarted.Done()
 
 	switch conn := this.conn.(type) {
-	case net.Conn:
+	case quic.Stream:
 		//glog.Debugf("server/handleConnection: Setting read deadline to %d", time.Second*time.Duration(this.keepAlive))
 		keepAlive := time.Second * time.Duration(this.keepAlive)
 		r := timeoutReader{
@@ -105,7 +106,7 @@ func (this *service) sender() {
 	this.wgStarted.Done()
 
 	switch conn := this.conn.(type) {
-	case net.Conn:
+	case quic.Stream:
 		for {
 			_, err := this.out.WriteTo(conn)
 

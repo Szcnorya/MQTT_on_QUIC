@@ -145,7 +145,7 @@ func (this *Server) ListenAndServe(uri string) error {
 	}
 
 	//change to Quic listen
-	this.ln, err := quic.ListenAddr(u.Host, generateTLSConfig(), nil)
+	this.ln, err = quic.ListenAddr(u.Host, generateTLSConfig(), nil)
 
 	// this.ln, err = net.Listen(u.Scheme, u.Host)
 	// if err != nil {
@@ -282,7 +282,7 @@ func (this *Server) handleConnection(c io.Closer) (svc *service, err error) {
 		return nil, err
 	}
 	fmt.Println("Inside HandleConnection")
-	conn, ok := c.(quic.stream)
+	conn, ok := c.(quic.Stream)
 	if !ok {
 		return nil, ErrInvalidConnectionType
 	}

@@ -16,7 +16,6 @@ package service
 
 import (
 	"fmt"
-	"net"
 	"net/url"
 	"sync/atomic"
 	"time"
@@ -26,6 +25,7 @@ import (
 	"github.com/surgemq/surgemq/topics"
 
 	quic "github.com/lucas-clemente/quic-go"
+	
 	"crypto/tls"
 
 )
@@ -71,15 +71,16 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 		return err
 	}
 	fmt.Println("Parse URL success")
-	if u.Scheme != "quic" {
-		return ErrInvalidConnectionType
-	}
+	fmt.Println(u)
+	// if u.Scheme != "quic" {
+	// 	return ErrInvalidConnectionType
+	// }
 
 	session, err := quic.DialAddr(u.Host, &tls.Config{InsecureSkipVerify: true}, nil)
 	if err != nil {
 		return err
 	}
-	fmt.Println("Dial Addr success")
+	// fmt.Println("Dial Addr success")
 	conn, err := session.OpenStreamSync()
 	if err != nil {
 		return err
@@ -98,7 +99,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 	if err = writeMessage(conn, msg); err != nil {
 		return err
 	}
-	fmt.Println("Write Conn Msg success")
+	// fmt.Println("Write Conn Msg success")
 	conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(this.ConnectTimeout)))
 
 	resp, err := getConnackMessage(conn)
@@ -109,7 +110,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 	if resp.ReturnCode() != message.ConnectionAccepted {
 		return resp.ReturnCode()
 	}
-	fmt.Println("Conn Accept success")
+	// fmt.Println("Conn Accept success")
 	this.svc = &service{
 		id:     atomic.AddUint64(&gsvcid, 1),
 		client: true,
