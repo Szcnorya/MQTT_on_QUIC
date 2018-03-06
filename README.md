@@ -7,8 +7,8 @@ The ultimate goal is to migrate MQTT from TCP to QUIC and evaluate its performan
 2. March 21, Project Presentation
 
 ## Milestones
-- [ ] Implement SurgeMQ test Clients
-- [ ] Get QuicGo server/client work(learn the interface)
+- [x] Implement SurgeMQ test Clients
+- [x] Get QuicGo server/client work(learn the interface)
 - [ ] Evaluate SurgeMQ(plain) test Client in Mininet
 - [ ] Migrate SurgeMQ to QUIC
 - [ ] Evaluate SurgeMQ(QUIC) test Client in Mininet
