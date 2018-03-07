@@ -70,8 +70,8 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 	if err != nil {
 		return err
 	}
-	fmt.Println("Parse URL success")
-	fmt.Println(u)
+	// fmt.Println("Parse URL success")
+	// fmt.Println(u)
 	// if u.Scheme != "quic" {
 	// 	return ErrInvalidConnectionType
 	// }
@@ -142,7 +142,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 
 	this.svc.inStat.increment(int64(msg.Len()))
 	this.svc.outStat.increment(int64(resp.Len()))
-	fmt.Println("Everything success")
+	// fmt.Println("Everything success")
 	return nil
 }
 

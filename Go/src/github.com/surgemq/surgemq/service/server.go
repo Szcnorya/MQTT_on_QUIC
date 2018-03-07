@@ -281,7 +281,6 @@ func (this *Server) handleConnection(c io.Closer) (svc *service, err error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Inside HandleConnection")
 	conn, ok := c.(quic.Stream)
 	if !ok {
 		return nil, ErrInvalidConnectionType
