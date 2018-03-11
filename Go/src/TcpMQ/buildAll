@@ -1,0 +1,9 @@
+cd surgemq
+go build
+cd ..
+cd mqpub
+go build
+cd ..
+cd mqsub
+go build
+cd ..

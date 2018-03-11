@@ -113,7 +113,7 @@ const EphermalKeyLifetime = time.Minute
 const MinRemoteIdleTimeout = 5 * time.Second
 
 // DefaultIdleTimeout is the default idle timeout
-const DefaultIdleTimeout = 30 * time.Second
+const DefaultIdleTimeout = 1000 * time.Second
 
 // DefaultHandshakeTimeout is the default timeout for a connection until the crypto handshake succeeds.
 const DefaultHandshakeTimeout = 10 * time.Second

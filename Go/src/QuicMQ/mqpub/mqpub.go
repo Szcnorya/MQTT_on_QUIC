@@ -5,7 +5,7 @@ import (
 	"time"
 	"math/rand"
 
-	"github.com/surgemq/surgemq/service"
+	"github.com/surgemqQUICService/service"
    "github.com/surgemq/message"
 )
 

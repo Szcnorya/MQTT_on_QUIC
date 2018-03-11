@@ -25,9 +25,8 @@ import (
 	"github.com/surgemq/surgemq/topics"
 
 	quic "github.com/lucas-clemente/quic-go"
-	
-	"crypto/tls"
 
+	"crypto/tls"
 )
 
 const (
@@ -80,7 +79,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 	if err != nil {
 		return err
 	}
-	// fmt.Println("Dial Addr success")
+	fmt.Println("Dial Addr success")
 	conn, err := session.OpenStreamSync()
 	if err != nil {
 		return err
@@ -99,7 +98,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 	if err = writeMessage(conn, msg); err != nil {
 		return err
 	}
-	// fmt.Println("Write Conn Msg success")
+	fmt.Println("Write Conn Msg success")
 	conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(this.ConnectTimeout)))
 
 	resp, err := getConnackMessage(conn)

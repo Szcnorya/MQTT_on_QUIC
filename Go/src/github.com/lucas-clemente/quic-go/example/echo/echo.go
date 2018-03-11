@@ -39,10 +39,12 @@ func echoServer() error {
 	if err != nil {
 		return err
 	}
+
 	stream, err := sess.AcceptStream()
 	if err != nil {
 		panic(err)
 	}
+
 	// Echo through the loggingWriter
 	_, err = io.Copy(stream, stream)
 	return err
@@ -74,7 +76,6 @@ func clientMain() error {
 
 	return nil
 }
-
 
 // Setup a bare-bones TLS config for the server
 func generateTLSConfig() *tls.Config {

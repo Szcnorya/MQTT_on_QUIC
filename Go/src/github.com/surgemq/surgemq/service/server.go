@@ -26,11 +26,11 @@ import (
 
 	//crypto tls
 	"crypto/rand"
-    "crypto/rsa"
-    "crypto/tls"
-    "crypto/x509"
-    "encoding/pem"
-    "math/big"
+	"crypto/rsa"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/pem"
+	"math/big"
 
 	"github.com/surge/glog"
 	"github.com/surgemq/message"
@@ -50,7 +50,7 @@ var (
 
 const (
 	DefaultKeepAlive        = 300
-	DefaultConnectTimeout   = 2
+	DefaultConnectTimeout   = 30
 	DefaultAckTimeout       = 20
 	DefaultTimeoutRetries   = 3
 	DefaultSessionsProvider = "mem"
@@ -107,7 +107,6 @@ type Server struct {
 	//ln net.Listener
 	ln quic.Listener
 
-
 	// A list of services created by the server. We keep track of them so we can
 	// gracefully shut them down if they are still alive when the server goes down.
 	svcs []*service
@@ -157,18 +156,19 @@ func (this *Server) ListenAndServe(uri string) error {
 
 	var tempDelay time.Duration // how long to sleep on accept failure
 
-	for 
-	{
+	for {
 		//Quic accept
 		sess, err := this.ln.Accept()
-        if err != nil {
-                return err
-        }
-        conn, err := sess.AcceptStream()
-        if err != nil {
-                panic(err)
-        }
+		if err != nil {
+			return err
+		}
 
+		conn, err := sess.AcceptStream()
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println("accepted")
 		//conn, err := this.ln.Accept()
 
 		if err != nil {
@@ -267,6 +267,8 @@ func (this *Server) Close() error {
 
 // HandleConnection is for the broker to handle an incoming connection from a client
 func (this *Server) handleConnection(c io.Closer) (svc *service, err error) {
+
+	fmt.Println("handling connection")
 	if c == nil {
 		return nil, ErrInvalidConnectionType
 	}
@@ -468,26 +470,25 @@ func (this *Server) getSession(svc *service, req *message.ConnectMessage, resp *
 	return nil
 }
 
-
 // Setup a bare-bones TLS config for the server
 func generateTLSConfig() *tls.Config {
-        key, err := rsa.GenerateKey(rand.Reader, 1024)
-        if err != nil {
-                panic(err)
-        }
-        template := x509.Certificate{SerialNumber: big.NewInt(1)}
-        certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &key.PublicKey, key)
-        if err != nil {
-                panic(err)
-        }
-        keyPEM := pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)})
-        certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	if err != nil {
+		panic(err)
+	}
+	template := x509.Certificate{SerialNumber: big.NewInt(1)}
+	certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &key.PublicKey, key)
+	if err != nil {
+		panic(err)
+	}
+	keyPEM := pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)})
+	certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
 
-        tlsCert, err := tls.X509KeyPair(certPEM, keyPEM)
-        if err != nil {
-                panic(err)
-        }
-        return &tls.Config{Certificates: []tls.Certificate{tlsCert}}
-        //return &tls.Config{InsecureSkipVerify: true}
+	tlsCert, err := tls.X509KeyPair(certPEM, keyPEM)
+	if err != nil {
+		panic(err)
+	}
+	return &tls.Config{Certificates: []tls.Certificate{tlsCert}}
+	//return &tls.Config{InsecureSkipVerify: true}
 
 }
