@@ -184,7 +184,6 @@ func (this *service) processIncoming(msg message.Message) error {
 	if err != nil {
 		glog.Debugf("(%s) Error processing acked message: %v", this.cid(), err)
 	}
-
 	return err
 }
 

@@ -31,7 +31,7 @@ func setPubMsg(Id int, topic string, payload string, qos int) *message.PublishMe
 func main(){
 	version := flag.Int("v",3,"Version of MQTT Client")
 	CliID := flag.String("id","Pub","Client Id, a string")
-	KeepAlive := flag.Int("alive",5, "Timeout time")
+	KeepAlive := flag.Int("alive",10, "Timeout time")
 	targetHost := flag.String("h","localhost:1883","Broker host address")
 	topic := flag.String("t","test","Topic")
 	message := flag.String("m","Steal your heart!","Message body")

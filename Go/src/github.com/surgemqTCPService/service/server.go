@@ -260,7 +260,7 @@ func (this *Server) handleConnection(c io.Closer) (svc *service, err error) {
 	// a CONNACK error. If it's CONNACK error, send the proper CONNACK error back
 	// to client. Exit regardless of error type.
 
-	conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(this.ConnectTimeout)))
+	// conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(this.ConnectTimeout)))
 
 	resp := message.NewConnackMessage()
 

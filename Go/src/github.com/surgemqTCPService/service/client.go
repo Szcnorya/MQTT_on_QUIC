@@ -5,7 +5,7 @@ import (
 	"net"
 	"net/url"
 	"sync/atomic"
-	"time"
+	// "time"
 
 	"github.com/surgemq/message"
 	"github.com/surgemq/surgemq/sessions"
@@ -76,7 +76,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 		return err
 	}
 
-	conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(this.ConnectTimeout)))
+	// conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(this.ConnectTimeout)))
 
 	resp, err := getConnackMessage(conn)
 	if err != nil {

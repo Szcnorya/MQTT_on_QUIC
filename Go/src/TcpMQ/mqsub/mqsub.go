@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/surge/glog"
 	"github.com/surgemq/message"
 	"github.com/surgemqTCPService/service"
 )
@@ -27,7 +28,7 @@ func onPublishCallback(msg *message.PublishMessage) error {
 func main() {
 	version := flag.Int("v", 3, "Version of MQTT Client")
 	CliID := flag.String("id", "Sub", "Client Id, a string")
-	KeepAlive := flag.Int("alive", 5, "Timeout time")
+	KeepAlive := flag.Int("alive", 30, "Timeout time")
 	targetHost := flag.String("h", "localhost:1883", "Broker host address")
 	topic := flag.String("t", "test", "Topic")
 	MaxQosLevel := flag.Int("q", 0, "Max QoS level")
@@ -41,15 +42,28 @@ func main() {
 	msg := setConnMsg(*version, *CliID, *KeepAlive)
 
 	// Connects to the remote server at 127.0.0.1 port 1883
-	c.Connect("tcp://"+*targetHost, msg)
+	err := c.Connect("tcp://"+*targetHost, msg)
+	if err == nil {
+		fmt.Println("connect succesfully")
+	}else{
+		glog.Errorf("connect fail %v", err)
+	}
 
 	submsg := message.NewSubscribeMessage()
 	submsg.AddTopic([]byte(*topic), byte(*MaxQosLevel))
-	c.Subscribe(submsg, nil, onPublishCallback)
-	fmt.Println("subscribed succesfully")
-
+	err = c.Subscribe(submsg, nil, onPublishCallback)
+	if err == nil {
+		fmt.Println("subscribed succesfully")
+	}else{
+		glog.Errorf("subscribe fail %v", err)
+	}
 	for {
-		time.Sleep(1 * time.Second)
+		time.Sleep(5 * time.Second)
+		// err = c.Ping(nil)
+		// if err != nil{
+		// 	glog.Errorf("%v", err)
+		// 	break
+		// }
 	}
 	// Disconnects from the server
 	c.Disconnect()
