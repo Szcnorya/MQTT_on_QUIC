@@ -21,6 +21,8 @@ import (
 	"net"
 
 	"github.com/surgemq/message"
+	quic "github.com/lucas-clemente/quic-go"
+
 )
 
 func getConnectMessage(conn io.Closer) (*message.ConnectMessage, error) {
@@ -68,7 +70,7 @@ func getMessageBuffer(c io.Closer) ([]byte, error) {
 		return nil, ErrInvalidConnectionType
 	}
 
-	conn, ok := c.(net.Conn)
+	conn, ok := c.(quic.Stream)
 	if !ok {
 		return nil, ErrInvalidConnectionType
 	}
@@ -132,7 +134,8 @@ func writeMessageBuffer(c io.Closer, b []byte) error {
 		return ErrInvalidConnectionType
 	}
 
-	conn, ok := c.(net.Conn)
+	conn, ok := c.(quic.Stream)
+	
 	if !ok {
 		return ErrInvalidConnectionType
 	}

@@ -24,11 +24,21 @@ import (
 	"sync/atomic"
 	"time"
 
+	//crypto tls
+	"crypto/rand"
+    "crypto/rsa"
+    "crypto/tls"
+    "crypto/x509"
+    "encoding/pem"
+    "math/big"
+
 	"github.com/surge/glog"
 	"github.com/surgemq/message"
 	"github.com/surgemq/surgemq/auth"
 	"github.com/surgemq/surgemq/sessions"
 	"github.com/surgemq/surgemq/topics"
+
+	quic "github.com/lucas-clemente/quic-go"
 )
 
 var (
@@ -94,7 +104,9 @@ type Server struct {
 	// is closed, then it's a signal for it to shutdown as well.
 	quit chan struct{}
 
-	ln net.Listener
+	//ln net.Listener
+	ln quic.Listener
+
 
 	// A list of services created by the server. We keep track of them so we can
 	// gracefully shut them down if they are still alive when the server goes down.
@@ -132,18 +144,32 @@ func (this *Server) ListenAndServe(uri string) error {
 		return err
 	}
 
-	this.ln, err = net.Listen(u.Scheme, u.Host)
-	if err != nil {
-		return err
-	}
+	//change to Quic listen
+	this.ln, err = quic.ListenAddr(u.Host, generateTLSConfig(), nil)
+
+	// this.ln, err = net.Listen(u.Scheme, u.Host)
+	// if err != nil {
+	// 	return err
+	// }
 	defer this.ln.Close()
 
 	glog.Infof("server/ListenAndServe: server is ready...")
 
 	var tempDelay time.Duration // how long to sleep on accept failure
 
-	for {
-		conn, err := this.ln.Accept()
+	for 
+	{
+		//Quic accept
+		sess, err := this.ln.Accept()
+        if err != nil {
+                return err
+        }
+        conn, err := sess.AcceptStream()
+        if err != nil {
+                panic(err)
+        }
+
+		//conn, err := this.ln.Accept()
 
 		if err != nil {
 			// http://zhen.org/blog/graceful-shutdown-of-go-net-dot-listeners/
@@ -255,8 +281,7 @@ func (this *Server) handleConnection(c io.Closer) (svc *service, err error) {
 	if err != nil {
 		return nil, err
 	}
-
-	conn, ok := c.(net.Conn)
+	conn, ok := c.(quic.Stream)
 	if !ok {
 		return nil, ErrInvalidConnectionType
 	}
@@ -441,4 +466,28 @@ func (this *Server) getSession(svc *service, req *message.ConnectMessage, resp *
 	}
 
 	return nil
+}
+
+
+// Setup a bare-bones TLS config for the server
+func generateTLSConfig() *tls.Config {
+        key, err := rsa.GenerateKey(rand.Reader, 1024)
+        if err != nil {
+                panic(err)
+        }
+        template := x509.Certificate{SerialNumber: big.NewInt(1)}
+        certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &key.PublicKey, key)
+        if err != nil {
+                panic(err)
+        }
+        keyPEM := pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)})
+        certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
+
+        tlsCert, err := tls.X509KeyPair(certPEM, keyPEM)
+        if err != nil {
+                panic(err)
+        }
+        return &tls.Config{Certificates: []tls.Certificate{tlsCert}}
+        //return &tls.Config{InsecureSkipVerify: true}
+
 }
