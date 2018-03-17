@@ -58,12 +58,12 @@ func main() {
 		glog.Errorf("subscribe fail %v", err)
 	}
 	for {
-		time.Sleep(5 * time.Second)
-		// err = c.Ping(nil)
-		// if err != nil{
-		// 	glog.Errorf("%v", err)
-		// 	break
-		// }
+		err = c.Ping(nil)
+		if err != nil{
+			glog.Errorf("%v", err)
+			break
+		}
+		time.Sleep(10 * time.Second)	
 	}
 	// Disconnects from the server
 	c.Disconnect()

@@ -101,7 +101,6 @@ func (this *service) processor() {
 
 func (this *service) processIncoming(msg message.Message) error {
 	var err error = nil
-
 	switch msg := msg.(type) {
 	case *message.PublishMessage:
 		// For PUBLISH message, we should figure out what QoS it is and process accordingly
@@ -195,12 +194,10 @@ func (this *service) processAcked(ackq *sessions.Ackqueue) {
 			glog.Errorf("process/processAcked: Unable to creating new %s message: %v", ackmsg.Mtype, err)
 			continue
 		}
-
 		if _, err := msg.Decode(ackmsg.Msgbuf); err != nil {
 			glog.Errorf("process/processAcked: Unable to decode %s message: %v", ackmsg.Mtype, err)
 			continue
 		}
-
 		ack, err := ackmsg.State.New()
 		if err != nil {
 			glog.Errorf("process/processAcked: Unable to creating new %s message: %v", ackmsg.State, err)
@@ -211,7 +208,6 @@ func (this *service) processAcked(ackq *sessions.Ackqueue) {
 			glog.Errorf("process/processAcked: Unable to decode %s message: %v", ackmsg.State, err)
 			continue
 		}
-
 		//glog.Debugf("(%s) Processing acked message: %v", this.cid(), ack)
 
 		// - PUBACK if it's QoS 1 message. This is on the client side.
