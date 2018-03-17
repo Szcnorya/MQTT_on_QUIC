@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strings"
 	"time"
 
 	"github.com/surge/glog"
@@ -58,7 +59,7 @@ func (this *service) receiver() {
 			_, err := this.in.ReadFrom(r)
 
 			if err != nil {
-				if err != io.EOF {
+				if !(err == io.EOF || strings.HasSuffix(err.Error(), "use of closed network connection")) {
 					glog.Errorf("(%s) error reading from connection: %v", this.cid(), err)
 				}
 				return
@@ -96,7 +97,7 @@ func (this *service) sender() {
 			_, err := this.out.WriteTo(conn)
 
 			if err != nil {
-				if err != io.EOF {
+				if !(err == io.EOF || strings.HasSuffix(err.Error(), "use of closed network connection")) {
 					glog.Errorf("(%s) error writing data: %v", this.cid(), err)
 				}
 				return

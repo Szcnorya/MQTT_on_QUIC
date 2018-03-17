@@ -1,9 +1,12 @@
-cd surgemq
+cd surgemqquic
 go build
+go install
 cd ..
-cd mqpub
+cd mqpubquic
 go build
+go install
 cd ..
-cd mqsub
+cd mqsubquic
 go build
+go install
 cd ..

@@ -18,12 +18,12 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
+	quic "github.com/lucas-clemente/quic-go"
 	"github.com/surge/glog"
 	"github.com/surgemq/message"
-	quic "github.com/lucas-clemente/quic-go"
-
 )
 
 type netReader interface {
@@ -73,7 +73,7 @@ func (this *service) receiver() {
 			_, err := this.in.ReadFrom(r)
 
 			if err != nil {
-				if err != io.EOF {
+				if !(err == io.EOF || strings.HasSuffix(err.Error(), "use of closed network connection")) {
 					glog.Errorf("(%s) error reading from connection: %v", this.cid(), err)
 				}
 				return
@@ -111,7 +111,7 @@ func (this *service) sender() {
 			_, err := this.out.WriteTo(conn)
 
 			if err != nil {
-				if err != io.EOF {
+				if !(err == io.EOF || strings.HasSuffix(err.Error(), "use of closed network connection")) {
 					glog.Errorf("(%s) error writing data: %v", this.cid(), err)
 				}
 				return

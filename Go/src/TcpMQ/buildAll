@@ -1,9 +1,12 @@
-cd surgemq
+cd surgemqtcp
 go build
+go install
 cd ..
-cd mqpub
+cd mqpubtcp
 go build
+go install
 cd ..
-cd mqsub
+cd mqsubtcp
 go build
+go install
 cd ..
