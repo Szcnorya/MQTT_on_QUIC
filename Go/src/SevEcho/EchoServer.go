@@ -6,7 +6,7 @@ import (
         "crypto/tls"
         "crypto/x509"
         "encoding/pem"
-        "fmt"
+        // "fmt"
         "io"
         "time"
         "math/big"
@@ -33,16 +33,20 @@ func echoServer() error {
                 if err != nil {
                         continue
                 }
-                //fmt.Println("2")
-                stream, err := sess.AcceptStream()
-                if err != nil {
-                        continue
-                }
-                // Echo through 
-                _, err = io.Copy(stream, stream)
-                if err!= nil{
-                        continue
-                }
+                go echoSession(sess)
+        }
+        return nil
+}
+
+func echoSession(sess quic.Session) error{
+        stream, err := sess.AcceptStream()
+        if err != nil {
+                return err
+        }
+        // Echo through 
+        _, err = io.Copy(stream, stream)
+        if err!= nil{
+                return err
         }
         return nil
 }
