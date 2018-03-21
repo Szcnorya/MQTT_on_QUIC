@@ -74,7 +74,7 @@ func (this *service) receiver() {
 
 			if err != nil {
 				if err != io.EOF {
-					glog.Errorf("(%s) error reading from connection: %v", this.cid(), err)
+					// glog.Errorf("(%s) error reading from connection: %v", this.cid(), err)
 				}
 				return
 			}

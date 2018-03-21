@@ -19,11 +19,11 @@ func setConnMsg(version int, ID string, KeepAlive int) *message.ConnectMessage{
 	return msg
 }
 
-func setPubMsg(Id int, topic string, payload string, qos int) *message.PublishMessage{
+func setPubMsg(Id int, topic string, payload int, qos int) *message.PublishMessage{
 	pubmsg := message.NewPublishMessage()
 	pubmsg.SetPacketId(uint16(Id))
 	pubmsg.SetTopic([]byte(topic))
-	pubmsg.SetPayload([]byte(payload))
+	pubmsg.SetPayload(make([]byte,payload*1024))
 	pubmsg.SetQoS(byte(qos))
 	return pubmsg
 }
@@ -34,7 +34,7 @@ func main(){
 	KeepAlive := flag.Int("alive",5, "Timeout time")
 	targetHost := flag.String("h","localhost:1883","Broker host address")
 	topic := flag.String("t","test","Topic")
-	message := flag.String("m","Steal your heart!","Message body")
+	message := flag.Int("m",1,"Message body legnth")
 	MsgQosLevel := flag.Int("q",0,"QoS level")
 
 	flag.Parse()

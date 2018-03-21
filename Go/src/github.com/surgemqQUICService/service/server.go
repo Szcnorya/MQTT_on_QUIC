@@ -18,7 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net"
+	// "net"
 	"net/url"
 	"sync"
 	"sync/atomic"
@@ -143,7 +143,7 @@ func (this *Server) ListenAndServe(uri string) error {
 		return err
 	}
 
-	config := quic.Config{HandshakeTimeout:5*time.Second,IdleTimeout:10*time.Second}
+	config := quic.Config{HandshakeTimeout:10*time.Second,IdleTimeout:15*time.Second}
 	//change to Quic listen
 	this.ln, err = quic.ListenAddr(u.Host, generateTLSConfig(), &config)
 
@@ -155,47 +155,19 @@ func (this *Server) ListenAndServe(uri string) error {
 
 	glog.Infof("server/ListenAndServe: server is ready...")
 
-	var tempDelay time.Duration // how long to sleep on accept failure
+	// var tempDelay time.Duration // how long to sleep on accept failure
 
 	for {
 		//Quic accept
 		sess, err := this.ln.Accept()
 		if err != nil {
-			glog.Errorf("%v",err)
+			// glog.Errorf("%v",err)
 			continue
 		}
 
 		conn, err := sess.AcceptStream()
 		if err != nil {
-			glog.Errorf("%v",err)
-			continue
-		}
-
-		// fmt.Println("accepted")
-		if err != nil {
-			// http://zhen.org/blog/graceful-shutdown-of-go-net-dot-listeners/
-			select {
-			case <-this.quit:
-				return nil
-
-			default:
-			}
-
-			// Borrowed from go1.3.3/src/pkg/net/http/server.go:1699
-			if ne, ok := err.(net.Error); ok && ne.Temporary() {
-				if tempDelay == 0 {
-					tempDelay = 5 * time.Millisecond
-				} else {
-					tempDelay *= 2
-				}
-				if max := 1 * time.Second; tempDelay > max {
-					tempDelay = max
-				}
-				glog.Errorf("server/ListenAndServe: Accept error: %v; retrying in %v", err, tempDelay)
-				time.Sleep(tempDelay)
-				continue
-			}
-			glog.Errorf("%v",err)
+			// glog.Errorf("%v",err)
 			continue
 		}
 
