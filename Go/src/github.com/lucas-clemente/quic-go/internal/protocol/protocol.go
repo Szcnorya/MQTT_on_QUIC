@@ -75,10 +75,10 @@ const MaxReceivePacketSize ByteCount = 1452
 const DefaultTCPMSS ByteCount = 1460
 
 // MinClientHelloSize is the minimum size the server expects an inchoate CHLO to have (in gQUIC)
-const MinClientHelloSize = 1024
+const MinClientHelloSize = 50
 
 // MinInitialPacketSize is the minimum size an Initial packet (in IETF QUIC) is required to have.
-const MinInitialPacketSize = 1200
+const MinInitialPacketSize = 50
 
 // MaxClientHellos is the maximum number of times we'll send a client hello
 // The value 3 accounts for:

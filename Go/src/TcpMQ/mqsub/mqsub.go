@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/surge/glog"
+	// "github.com/surge/glog"
 	"github.com/surgemq/message"
 	"github.com/surgemqTCPService/service"
 )
@@ -43,27 +43,27 @@ func main() {
 
 	// Connects to the remote server at 127.0.0.1 port 1883
 	err := c.Connect("tcp://"+*targetHost, msg)
-	if err == nil {
-		fmt.Println("connect succesfully")
-	}else{
-		glog.Errorf("connect fail %v", err)
-	}
+	// if err == nil {
+	// 	// fmt.Println("connect succesfully")
+	// }else{
+	// 	// glog.Errorf("connect fail %v", err)
+	// }
 
 	submsg := message.NewSubscribeMessage()
 	submsg.AddTopic([]byte(*topic), byte(*MaxQosLevel))
 	err = c.Subscribe(submsg, nil, onPublishCallback)
-	if err == nil {
-		fmt.Println("subscribed succesfully")
-	}else{
-		glog.Errorf("subscribe fail %v", err)
-	}
+	// if err == nil {
+	// 	fmt.Println("subscribed succesfully")
+	// }else{
+	// 	glog.Errorf("subscribe fail %v", err)
+	// }
 	for {
 		if c.Done(){
 			break
 		}
 		err = c.Ping(nil)
 		if err != nil{
-			glog.Errorf("%v", err)
+			// glog.Errorf("%v", err)
 			break
 		}
 		time.Sleep(10 * time.Second)	
