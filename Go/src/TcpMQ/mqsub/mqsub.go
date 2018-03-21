@@ -58,7 +58,7 @@ func main() {
 		glog.Errorf("subscribe fail %v", err)
 	}
 	for {
-		if c.isDone(){
+		if c.Done(){
 			break
 		}
 		err = c.Ping(nil)

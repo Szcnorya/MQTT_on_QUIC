@@ -2,9 +2,10 @@ package service
 
 import (
 	"fmt"
-	"net"
+	// "net"
 	"net/url"
 	"sync/atomic"
+	"crypto/tls"
 	// "time"
 
 	"github.com/surgemq/message"
@@ -57,7 +58,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 		return ErrInvalidConnectionType
 	}
 
-	conn, err := net.Dial(u.Scheme, u.Host)
+	conn, err := tls.Dial(u.Scheme, u.Host, &tls.Config{InsecureSkipVerify: true})
 	if err != nil {
 		return err
 	}
@@ -171,6 +172,9 @@ func (this *Client) getSession(svc *service, req *message.ConnectMessage, resp *
 	//id := string(req.ClientId())
 	svc.sess = &sessions.Session{}
 	return svc.sess.Init(req)
+}
+func (this *Client) Done() bool {
+	return this.svc.isDone()
 }
 
 func (this *Client) checkConfiguration() {
