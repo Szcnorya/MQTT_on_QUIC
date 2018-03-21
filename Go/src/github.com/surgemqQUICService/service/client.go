@@ -79,7 +79,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 	if err != nil {
 		return err
 	}
-	fmt.Println("Dial Addr success")
+	// fmt.Println("Dial Addr success")
 	conn, err := session.OpenStreamSync()
 	if err != nil {
 		return err
@@ -87,7 +87,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 
 	defer func() {
 		if err != nil {
-			conn.Close()
+			session.Close(nil)
 		}
 	}()
 
@@ -98,7 +98,7 @@ func (this *Client) Connect(uri string, msg *message.ConnectMessage) (err error)
 	if err = writeMessage(conn, msg); err != nil {
 		return err
 	}
-	fmt.Println("Write Conn Msg success")
+	// fmt.Println("Write Conn Msg success")
 	conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(this.ConnectTimeout)))
 
 	resp, err := getConnackMessage(conn)
@@ -195,6 +195,11 @@ func (this *Client) getSession(svc *service, req *message.ConnectMessage, resp *
 	svc.sess = &sessions.Session{}
 	return svc.sess.Init(req)
 }
+
+func (this *Client) Done() bool {
+	return this.svc.isDone()
+}
+
 
 func (this *Client) checkConfiguration() {
 	if this.KeepAlive == 0 {

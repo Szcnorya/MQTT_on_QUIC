@@ -143,8 +143,9 @@ func (this *Server) ListenAndServe(uri string) error {
 		return err
 	}
 
+	config := quic.Config{HandshakeTimeout:5*time.Second,IdleTimeout:10*time.Second}
 	//change to Quic listen
-	this.ln, err = quic.ListenAddr(u.Host, generateTLSConfig(), nil)
+	this.ln, err = quic.ListenAddr(u.Host, generateTLSConfig(), &config)
 
 	// this.ln, err = net.Listen(u.Scheme, u.Host)
 	// if err != nil {
@@ -160,17 +161,17 @@ func (this *Server) ListenAndServe(uri string) error {
 		//Quic accept
 		sess, err := this.ln.Accept()
 		if err != nil {
-			return err
+			glog.Errorf("%v",err)
+			continue
 		}
 
 		conn, err := sess.AcceptStream()
 		if err != nil {
-			panic(err)
+			glog.Errorf("%v",err)
+			continue
 		}
 
-		fmt.Println("accepted")
-		//conn, err := this.ln.Accept()
-
+		// fmt.Println("accepted")
 		if err != nil {
 			// http://zhen.org/blog/graceful-shutdown-of-go-net-dot-listeners/
 			select {
@@ -194,7 +195,8 @@ func (this *Server) ListenAndServe(uri string) error {
 				time.Sleep(tempDelay)
 				continue
 			}
-			return err
+			glog.Errorf("%v",err)
+			continue
 		}
 
 		go this.handleConnection(conn)
@@ -268,7 +270,7 @@ func (this *Server) Close() error {
 // HandleConnection is for the broker to handle an incoming connection from a client
 func (this *Server) handleConnection(c io.Closer) (svc *service, err error) {
 
-	fmt.Println("handling connection")
+	// fmt.Println("handling connection")
 	if c == nil {
 		return nil, ErrInvalidConnectionType
 	}

@@ -21,7 +21,7 @@ func setConnMsg(version int, ID string, KeepAlive int) *message.ConnectMessage {
 }
 
 func onPublishCallback(msg *message.PublishMessage) error {
-	fmt.Println(msg)
+	fmt.Println(len(msg.Payload()))
 	return nil
 }
 

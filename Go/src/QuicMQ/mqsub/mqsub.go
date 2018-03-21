@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/surge/glog"
 	"github.com/surgemq/message"
 	"github.com/surgemqQUICService/service"
 )
@@ -20,7 +21,7 @@ func setConnMsg(version int, ID string, KeepAlive int) *message.ConnectMessage {
 }
 
 func onPublishCallback(msg *message.PublishMessage) error {
-	fmt.Println(msg)
+	fmt.Println(len(msg.Payload()))
 	return nil
 }
 
@@ -46,10 +47,18 @@ func main() {
 	submsg := message.NewSubscribeMessage()
 	submsg.AddTopic([]byte(*topic), byte(*MaxQosLevel))
 	c.Subscribe(submsg, nil, onPublishCallback)
-	fmt.Println("subscribed succesfully")
+	// fmt.Println("subscribed succesfully")
 
 	for {
-		time.Sleep(1 * time.Second)
+		if c.Done(){
+			break
+		}
+		err :=  c.Ping(nil)
+		if err!= nil{
+			glog.Errorf("%v", err)
+			break
+		}
+		time.Sleep(10 * time.Second)
 	}
 	// Disconnects from the server
 	c.Disconnect()
