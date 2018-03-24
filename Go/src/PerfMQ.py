@@ -12,12 +12,12 @@ from mininet.link import TCLink
 from mininet.clean import Cleanup
 #setLogLevel("info")
 
-RUN_TIME = 15
+RUN_TIME = 30
 
 DELAYS = (5,)
-BANDWIDTHS = (50,75,100)
+BANDWIDTHS = (5,10,15)
 LOSSES = (0,1,2)
-PAYLOADS = (50,100,200)
+PAYLOADS = (1,10,25,50,100)
 
 class SimpleTopology(Topo):
 
@@ -42,21 +42,22 @@ def performance_test(srv_cmd, clt_cmd, brok_cmd, run_index, repeat_times, payloa
     h2 = net.get('h2')
     h3 = net.get('h3')
     h3.sendCmd(brok_cmd)
-    time.sleep(1)
+    time.sleep(0.3)
     ofile = open('meas/server_run_%s_%s' % ('_'.join("%s" % val for (key,val) in opts.iteritems()),payload), 'w')
     log = ""
     avg = 0.0
     h1.sendCmd(srv_cmd)
-    time.sleep(1)
+    time.sleep(0.3)
     for i in range(repeat_times):
         start = time.time()
-        h2.sendCmd(clt_cmd+"-m="+str(payload))
+        h2.sendCmd(clt_cmd+" -m="+str(payload))
         while(h1.waiting):
             ret = h1.monitor()
-            if(ret.strip()==str(payload)):
+            if(ret.strip()==str(payload*1024)):
                 break
         det = time.time()-start
         det *= 1000
+	print("#{0}:{1}".format(i,det))
         log += str(det) + "\n"
         while(h2.waiting):
             _ = h2.monitor()
@@ -76,7 +77,10 @@ def run_all_tests_sequentially():
         for bw in BANDWIDTHS:
             for loss in LOSSES:
                 for pl in PAYLOADS:
-                    performance_test("./TcpMQ/mqsub -h=192.168.0.3:1883","./TcpMQ/mqpub -h=192.168.0.3:1883", "./TcpMQ/surgemq/surgemq", run_index, RUN_TIME, pl, delay=str(delay)+"ms", bw=bw, loss=loss)
+                    if run_index<10:
+                        run_index+=1
+                        continue
+                    performance_test("./TcpMQ/mqsub/mqsub -h=192.168.0.3:1883","./TcpMQ/mqpub/mqpub -h=192.168.0.3:1883", "./TcpMQ/surgemq/surgemq", run_index, RUN_TIME, pl, delay=str(delay)+"ms", bw=bw, loss=loss)
                     run_index+=1
                     Cleanup.cleanup()
                 
