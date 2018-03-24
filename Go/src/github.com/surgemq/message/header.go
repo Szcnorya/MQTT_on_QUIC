@@ -226,7 +226,6 @@ func (this *header) decode(src []byte) (int, error) {
 	if int(this.remlen) > len(src[total:]) {
 		return total, fmt.Errorf("header/Decode: Remaining length (%d) is greater than remaining buffer (%d)", this.remlen, len(src[total:]))
 	}
-
 	return total, nil
 }
 

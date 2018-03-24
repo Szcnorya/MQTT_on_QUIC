@@ -27,6 +27,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/surge/glog"
+
 	"golang.org/x/net/http2/hpack"
 	"golang.org/x/net/idna"
 	"golang.org/x/net/lex/httplex"
@@ -641,6 +643,7 @@ func (cc *ClientConn) canTakeNewRequestLocked() bool {
 // connection. The timer could just call closeIfIdle, but this is more
 // clear.
 func (cc *ClientConn) onIdleTimeout() {
+	glog.Errorf("closed due to idleness")
 	cc.closeIfIdle()
 }
 
