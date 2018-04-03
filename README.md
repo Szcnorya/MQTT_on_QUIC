@@ -1,6 +1,7 @@
 # MQTT_on_QUIC
-It's a ongoing project right now.
 The ultimate goal is to migrate MQTT from TCP to QUIC and evaluate its performance.
+Partial results are gathered. However, the result is under refined investigation.
+It may still be a ongoing project in future.
 
 ## Milestones
 - [x] Implement SurgeMQ test Clients
@@ -14,8 +15,13 @@ We map the TCP connection to QUIC stream in MQTT implementation. However, it is 
 
 ## What we Found
 - QUIC stream perform better than TCP connection in lossy condition but not in perfect network
+![0 Loss QUICvTCP](images/Loss0.png) 
+![1 Loss QUICvTCP](images/Loss1.png) 
+![2 Loss QUICvTCP](images/Loss2.png)
 
-- MQTT with QUIC perform better than MQTT with TCP in perfect network but not in lossy network
+- MQTT with QUIC perform better than MQTT with TCP in perfect network and especially when payload is small
+![MQTT with QUIC with limited Bandwidth](images/MQQuicLowBW.png)
+![MQTT with QUIC with more Bandwidth](images/MQQuicHighBW.png)
 
 ## Working Environment Dependency
 1. QUIC-go: https://github.com/lucas-clemente/quic-go
