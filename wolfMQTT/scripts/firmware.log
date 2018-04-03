@@ -1,6 +1,0 @@
-/home/mininet/CSE222A/wolfMQTT/examples/firmware/.libs/lt-fwpush: error while loading shared libraries: libwolfssl.so.15: cannot open shared object file: No such file or directory
-/home/mininet/CSE222A/wolfMQTT/examples/firmware/.libs/lt-fwclient: error while loading shared libraries: libwolfssl.so.15: cannot open shared object file: No such file or directory
-6100a16e4f37ff74e6109d137a827b49 *./README.md
-md5sum: ./README.md.trs: No such file or directory
-rm: cannot remove ‘./README.md.trs’: No such file or directory
-MQTT Firmware Example Test Success!
