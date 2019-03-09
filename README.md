@@ -13,6 +13,14 @@ It may still be a ongoing project in future.
 ## Method for migration:
 We map the TCP connection to QUIC stream in MQTT implementation. However, it is also possible to map topics as seperate QUIC streams to avoid Head of Line Blocking(May be done in future).
 
+## Note for the structure of this project
+Basically, QuicEcho include a plain echo server and client implementation for QUIC and TCP.
+QuicMQ include a testing MQTT server and client implementation on QUIC and TCP respectively. Only Golang is required for running them. The "github.com" and "golang.org" is the dependency library package for these applications.
+
+The "surgemqQuicService" in "github.com" folder is modified version of surgemq module where in Quic version all TCP socket connection is replaced with Quic socket connection. You may need to investigate it depending what you want to explore in QuicMQ.
+
+The python script in "src" is the measurement script we write for data collection. It directly require Mininet emulator for setting up network topology. We actually run it in a VirtualBox image which was included in the Readme reference.
+
 ## What we Found
 - QUIC stream perform better than TCP connection in lossy condition but not in perfect network
 ![0 Loss QUICvTCP](images/Loss0.png) 
